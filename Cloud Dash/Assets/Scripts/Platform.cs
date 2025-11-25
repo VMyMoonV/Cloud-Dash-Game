@@ -11,9 +11,9 @@ public class JumpPlatform : MonoBehaviour
         {
             Rigidbody2D playerRb = collision.gameObject.GetComponent<Rigidbody2D>();
             
-            if (playerRb != null && playerRb.velocity.y <= 0)
+            if (playerRb != null && playerRb.linearVelocity.y <= 0)
             {
-                playerRb.velocity = new Vector2(playerRb.velocity.x, jumpForce);
+                playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, jumpForce);
                 Debug.Log($"Player jumped! Force: {jumpForce}");
             }
         }
