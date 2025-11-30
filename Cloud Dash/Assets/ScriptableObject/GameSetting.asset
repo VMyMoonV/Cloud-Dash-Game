@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8715e8649d6c14643acb7fe11919cf89, type: 3}
+  m_Name: GameSetting
+  m_EditorClassIdentifier: 
+  cameraSmoothSpeed: 10
+  deathDistanceBelowCamera: 3
+  restartDelay: 0.5
+  gameSceneName: Game
+  deathSound: {fileID: 0}
+  showDebugInfo: 0
+  startPlatformCount: 15
+  minYDistance: 1.5
+  maxYDistance: 2.5
+  moveSpeed: 5
+  jumpForce: 12
+  strongForce: 35
+  weakForce: 8
+  scoreInterval: 1

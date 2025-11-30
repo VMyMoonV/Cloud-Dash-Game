@@ -3,31 +3,25 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    [Header("UI")]
+    public GameSettings settings;
     public TMP_Text scoreText;
-    
-    [Header("Settings")]
     public Transform player;
-    public float scoreInterval = 1f;
-    
+
     private int score = 0;
-    private float nextScoreHeight;
-    private float startHeight;
+    private float nextHeight;
 
     void Start()
     {
-        startHeight = player.position.y;
-        score = 0;
-        nextScoreHeight = startHeight + scoreInterval;
+        nextHeight = player.position.y + settings.scoreInterval;
         UpdateScore();
     }
 
     void Update()
     {
-        if (player.position.y >= nextScoreHeight)
+        if (player.position.y >= nextHeight)
         {
             score++;
-            nextScoreHeight += scoreInterval;
+            nextHeight += settings.scoreInterval;
             UpdateScore();
         }
     }
@@ -35,13 +29,8 @@ public class ScoreManager : MonoBehaviour
     void UpdateScore()
     {
         if (scoreText != null)
-        {
             scoreText.text = score.ToString();
-        }
     }
 
-    public int GetScore()
-    {
-        return score;
-    }
+    public int GetScore() => score;
 }

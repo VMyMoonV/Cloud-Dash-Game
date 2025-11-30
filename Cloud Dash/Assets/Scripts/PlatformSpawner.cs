@@ -3,24 +3,21 @@ using System.Collections.Generic;
 
 public class PlatformSpawner : MonoBehaviour
 {
-    [Header("Platform Settings")]
-    public GameObject platformPrefab;
-    public int startPlatformCount = 15;
-    
-    [Header("Spawn Distance")]
-    public float minYDistance = 1.5f;
-    public float maxYDistance = 2.5f;
-    
+    public GameSettings settings;
+
+    [Header("Platform Prefabs")]
+    public GameObject jumpPrefab;
+    public GameObject strongPrefab;
+    public GameObject weakPrefab;
+
     private float highestY;
     private float screenLeft;
     private float screenRight;
-    private float platformWidth;
     private List<GameObject> platforms = new List<GameObject>();
 
     void Start()
     {
         CalculateScreenBounds();
-        CalculatePlatformWidth();
         SpawnInitialPlatforms();
     }
 
@@ -33,69 +30,55 @@ public class PlatformSpawner : MonoBehaviour
     void CalculateScreenBounds()
     {
         Camera cam = Camera.main;
-        screenLeft = cam.ScreenToWorldPoint(new Vector3(0, 0, 0)).x;
-        screenRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
-        
-        Debug.Log($"Screen: Left={screenLeft:F2}, Right={screenRight:F2}");
-    }
-
-    void CalculatePlatformWidth()
-    {
-        if (platformPrefab.GetComponent<SpriteRenderer>() != null)
-        {
-            platformWidth = platformPrefab.GetComponent<SpriteRenderer>().bounds.size.x;
-        }
-        else
-        {
-            platformWidth = 1f;
-        }
-        
-        Debug.Log($"Platform width: {platformWidth:F2}");
+        screenLeft = cam.ScreenToWorldPoint(new Vector3(0, 0)).x;
+        screenRight = cam.ScreenToWorldPoint(new Vector3(Screen.width, 0)).x;
     }
 
     void SpawnInitialPlatforms()
     {
         highestY = Camera.main.transform.position.y - 4f;
-        
-        for (int i = 0; i < startPlatformCount; i++)
-        {
+
+        for (int i = 0; i < settings.startPlatformCount; i++)
             SpawnPlatform();
-        }
-        
-        Debug.Log($"Spawned {startPlatformCount} platforms at start");
     }
 
     void SpawnPlatform()
     {
-        highestY += Random.Range(minYDistance, maxYDistance);
-        
-        float minX = screenLeft + (platformWidth / 2f) + 0.2f;
-        float maxX = screenRight - (platformWidth / 2f) - 0.2f;
-        float randomX = Random.Range(minX, maxX);
-        
-        Vector3 spawnPosition = new Vector3(randomX, highestY, 0f);
-        GameObject platform = Instantiate(platformPrefab, spawnPosition, Quaternion.identity);
+        highestY += Random.Range(settings.minYDistance, settings.maxYDistance);
+
+        GameObject prefab = GetRandomPrefab();
+        float width = prefab.GetComponent<SpriteRenderer>().bounds.size.x;
+
+        float minX = screenLeft + width / 2f;
+        float maxX = screenRight - width / 2f;
+        Vector3 pos = new Vector3(Random.Range(minX, maxX), highestY, 0f);
+
+        GameObject platform = Instantiate(prefab, pos, Quaternion.identity);
         platform.transform.SetParent(transform);
         platforms.Add(platform);
     }
 
+    GameObject GetRandomPrefab()
+    {
+        float rand = Random.value;
+        if (rand < 0.6f) return jumpPrefab;
+        else if (rand < 0.85f) return strongPrefab;
+        else return weakPrefab;
+    }
+
     void SpawnPlatformsAboveCamera()
     {
-        float cameraTopY = Camera.main.transform.position.y + Camera.main.orthographicSize;
-        
-        while (highestY < cameraTopY + 10f && platforms.Count < 50)
-        {
+        float cameraTop = Camera.main.transform.position.y + Camera.main.orthographicSize;
+        while (highestY < cameraTop + 10f)
             SpawnPlatform();
-        }
     }
 
     void RemoveOldPlatforms()
     {
-        float cameraBottomY = Camera.main.transform.position.y - Camera.main.orthographicSize;
-        
+        float cameraBottom = Camera.main.transform.position.y - Camera.main.orthographicSize;
         for (int i = platforms.Count - 1; i >= 0; i--)
         {
-            if (platforms[i] != null && platforms[i].transform.position.y < cameraBottomY - 5f)
+            if (platforms[i].transform.position.y < cameraBottom - 5f)
             {
                 Destroy(platforms[i]);
                 platforms.RemoveAt(i);

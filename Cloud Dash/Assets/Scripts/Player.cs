@@ -1,11 +1,9 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Movement")]
-    public float moveSpeed = 5f;
-    
+    public GameSettings settings;
+
     private Rigidbody2D rb;
     private SpriteRenderer sprite;
     private float horizontalInput;
@@ -19,26 +17,21 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         horizontalInput = Input.GetAxis("Horizontal");
-        
-        if (horizontalInput > 0)
-            sprite.flipX = false;
-        else if (horizontalInput < 0)
-            sprite.flipX = true;
-        
+
+        if (horizontalInput > 0) sprite.flipX = false;
+        if (horizontalInput < 0) sprite.flipX = true;
+
         WrapScreen();
     }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(horizontalInput * moveSpeed, rb.linearVelocity.y);
+        rb.linearVelocity = new Vector2(horizontalInput * settings.moveSpeed, rb.linearVelocity.y);
     }
 
     void WrapScreen()
     {
-        if (transform.position.x > 2.5f)
-            transform.position = new Vector2(-2.5f, transform.position.y);
-        
-        if (transform.position.x < -2.5f)
-            transform.position = new Vector2(2.5f, transform.position.y);
+        if (transform.position.x > 2.5f) transform.position = new Vector2(-2.5f, transform.position.y);
+        if (transform.position.x < -2.5f) transform.position = new Vector2(2.5f, transform.position.y);
     }
 }
